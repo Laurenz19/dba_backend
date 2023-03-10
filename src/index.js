@@ -2,10 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 
 /**
- * Sequelize && all models 
+ * Sequelize && allows the app to 
+ * create all tables in the database
  */
 const sequelize = require('./util/database');
 const Medecin = require('./models/medecin');
+const Patient = require('./models/patient');
+const Traitement = require('./models/traitement');
+const User = require('./models/user');
 
 const app = express();
 
@@ -24,10 +28,10 @@ app.use((req, res, next)=>{
 app.use(morgan('dev'));
 
 
-
 /**
  * Endpoints
  */
+app.use("/api", require("./routes/user.route"));
 app.use("/api/medecins", require("./routes/medecin.route"));
 app.use("/api/patients", require("./routes/patient.route"));
 app.use("/api/traitements", require("./routes/traitement.route"));
@@ -37,7 +41,7 @@ app.use("/api/traitements", require("./routes/traitement.route"));
 	try{
 		//Create all tables before bootstrap the app
 		await sequelize.sync(
-			{ force:false }
+			{ force:true }
 		)
 		app.listen(process.env.EXTERNAL_PORT || 3001);
 	}catch(error){

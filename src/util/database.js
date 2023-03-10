@@ -11,7 +11,7 @@ const Sequelize = require('sequelize');
 )*/
 
 const sequelize = new Sequelize(
-    'medecinDB',
+    'myDb',
     'laurenzio',
     'laurenzio',
     {
