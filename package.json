@@ -1,0 +1,26 @@
+{
+  "name": "backend_medecin",
+  "version": "1.0.0",
+  "description": "API de gestion des prestations des medecins",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/index.js"
+  },
+  "keywords": [
+    "API",
+    "Postgres",
+    "Sequelize",
+    "Node",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.21",
+    "pg": "^8.10.0",
+    "sequelize": "^6.29.1"
+  }
+}
