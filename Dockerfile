@@ -6,7 +6,7 @@ RUN npm i npm@latest -g
 
 COPY package.json package-lock*.json ./
 
-RUN npm install i
+RUN npm install
 
 COPY . .
 

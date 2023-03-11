@@ -28,7 +28,9 @@ const User = db.define('user', {
         allowNull: false,
         unique: true,
         validate:{
-            notEmpty: true,
+            notEmpty: {
+                msg:"l'email ne peut pas être vide"
+            },
             notNull:{
                 msg:"Veuillez saisir l'email de l'utilisateur"
             },

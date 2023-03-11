@@ -10,19 +10,26 @@ const Medecin = db.define('medecins', {
         primaryKey: true,
     },
     numMedecin:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(5),
         allowNull: true,
         unique: true,
         validate: {
-            notEmpty: false,
+            isAlphanumeric: true,
+            len:{
+                arg:[1,5],
+                msg:"Le numéro du medecin doit contenir 1 à 5 caractères"
+            } 
         }
     },
     nom:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         validate:{
-            notEmpty:{
-                msg: "Veuillez entrer le nom du medecin"
+            notNull:{
+                msg: "Veuillez saisir le nom du medecin"
+            },
+            notEmpty: {
+                msg: "Le nom ne peut pas être vide"
             },
             len: {
                 args: [3, 20],
@@ -31,11 +38,11 @@ const Medecin = db.define('medecins', {
         }
     },
     prenoms:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: true,
         validate:{
             notEmpty:{
-                msg: "Veuillez saisir le prénom du patient"
+                msg:"Le prénoms ne peut pas être vide"
             },
             len:{
                 args: [3, 50],
@@ -47,8 +54,15 @@ const Medecin = db.define('medecins', {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate:{
-            notEmpty: {
+            notNull:{
                 msg: "Veuillez saisir le tarif journalier"
+            },
+            notEmpty: {
+                msg: "Le tarif ne peut pas être vide"
+            },
+            isInt:{
+                args: true,
+                msg: "Le tarif journalier devrait être un nombre"
             },
             min: {
                 args: 100,
@@ -57,11 +71,8 @@ const Medecin = db.define('medecins', {
         }
     },
     imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate:{
-            notEmpty: false
-        }
+        type: DataTypes.STRING(50),
+        allowNull: true
     }
 })
 
@@ -73,6 +84,6 @@ Medecin.hasMany(Traitement, {
     onDelete: 'CASCADE'
 });
 
-Traitement.belongsTo(Medecin);
+//Traitement.belongsTo(Medecin);
 
 module.exports = Medecin;

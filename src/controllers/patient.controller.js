@@ -1,8 +1,22 @@
+const Patient = require("../models/patient")
 /**
  * Create new patient
  */
 
-exports.createPatient = (req, res) => {
+exports.createPatient = async(req, res) => {
+
+    const PATIENT_MODEL = {
+        name: req.body.name,
+        age: req.body.age,
+        gender: req.body.gender,
+        address: req.body.address,
+        phone: req.body.phone,
+    }
+   /*  try {
+        const patient = await Patient.create(req.body)
+    } catch (error) {
+        
+    } */
     res.status(200).json("Allows you to add a new patient");
 }
 

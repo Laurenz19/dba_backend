@@ -10,11 +10,14 @@ const Patient = db.define('patients', {
         primaryKey: true,
     },
     nom:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(),
         allowNull: false,
         validate:{
+            notNull: {
+                msg: "veuillez saisir le nom du patient"
+            },
             notEmpty: {
-                msg: "veuillez saisir le nom du medecin"
+                msg: "Le nom ne peut pas être vide"
             },
             len: {
                 args: [3, 20],
@@ -27,11 +30,27 @@ const Patient = db.define('patients', {
         allowNull: true,
         validate:{
             notEmpty: {
-                msg: "veuillez saisir le prénom du medecin",   
+                msg: "veuillez saisir le prénom du patient",   
+            },
+            notEmpty:{
+                msg: "les prénoms ne peut pas être vide"
             },
             len: {
                 args: [3, 50],
                 msg: "le prénom doit contenir 3 à 50 caractères"
+            }
+        }
+    },
+    genre:{
+        type: DataTypes.CHAR,
+        allowNull: false,
+        validate:{
+            notNull: {
+                msg: "veuillez renseigner le genre du patient"
+            },
+            isIN:{
+                args: ['M', 'F'],
+                msg: "le genre doit être Masculin ou Feminin"
             }
         }
     },
@@ -56,6 +75,6 @@ Patient.hasMany(Traitement, {
     onDelete: 'CASCADE'
 });
 
-Traitement.belongsTo(Patient)
+//Traitement.belongsTo(Patient)
 
 module.exports = Patient;
