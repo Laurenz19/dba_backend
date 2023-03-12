@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+require('dotenv').config();
 
 /**
  * Sequelize && allows the app to 
@@ -38,11 +39,18 @@ app.use("/api/traitements", require("./routes/traitement.route"));
 
 
 (async ()=>{
+	//Development mode
+	if(process.env.PGDATABASE == undefined) process.env.PGDATABASE = 'medecinDB';
+	if(process.env.PGUSER == undefined) process.env.PGUSER = 'postgres';
+	if(process.env.PGPASSWORD == undefined) process.env.PGPASSWORD = 'postgres';
+	if(process.env.PGHOST == undefined) process.env.PGHOST = 'localhost';
+
 	try{
 		//Create all tables before bootstrap the app
 		await sequelize.sync(
-			{ force:true }
+			{ force:false }
 		)
+
 		app.listen(process.env.EXTERNAL_PORT || 3001);
 	}catch(error){
 		console.log(error)

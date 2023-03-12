@@ -1,4 +1,7 @@
 const Patient = require("../models/patient")
+const Sequelize = require('sequelize');
+const db = require('../util/database');
+
 /**
  * Create new patient
  */
@@ -6,50 +9,162 @@ const Patient = require("../models/patient")
 exports.createPatient = async(req, res) => {
 
     const PATIENT_MODEL = {
-        name: req.body.name,
-        age: req.body.age,
-        gender: req.body.gender,
-        address: req.body.address,
-        phone: req.body.phone,
+        nom: req.body.nom,
+        prenoms: req.body.prenoms,
+        genre: req.body.genre,
+        adresse: req.body.adresse,
     }
-   /*  try {
-        const patient = await Patient.create(req.body)
-    } catch (error) {
+
+   //Switch the connexion to the current user
+   const sequelize = new Sequelize(process.env.PGDATABASE, req.user.username, req.user.password,
+        {
+                host: process.env.PGHOST,
+                dialect: 'postgres'
+        }
+    )
+    Patient.sequelize = sequelize;
+
+    await Patient.create(PATIENT_MODEL).then((response)=>{
+        console.log('Patient created');
         
-    } */
-    res.status(200).json("Allows you to add a new patient");
+        Patient.sequelize = db;
+        
+        res.status(201).json(response);
+    }).catch((response)=>{
+        /*  console.log(response); */
+        
+        if(response.errors) res.status(500).json(response.errors.map(err => { return {"message": err.message}}));
+        res.status(500).json([{"message": "Vous n'êtes pas autoriser à ajouter un patient"}]);
+    
+    }); 
 }
 
 /**
  * Update patient
  */
 
-exports.updatePatient = (req, res) => {
-    res.status(200).json("Allows you to update a patient");
+exports.updatePatient = async(req, res) => {
+     const PATIENT_MODEL = {
+        nom: req.body.nom,
+        prenoms: req.body.prenoms,
+        genre: req.body.genre,
+        adresse: req.body.adresse,
+    }
+
+    //Switch the connexion to the current user
+    const sequelize = new Sequelize(process.env.PGDATABASE, req.user.username, req.user.password,
+        {
+                host: process.env.PGHOST,
+                dialect: 'postgres'
+        }
+    )
+    Patient.sequelize = sequelize;
+
+    await Patient.findByPk(req.params.id).then(async(response)=>{
+        if(response == null) res.status(404).json([{"message":"Patient introuvable"}]);
+        else{
+            await Patient.update(PATIENT_MODEL, {where: {id: req.params.id}}).then(async()=>{
+                const data = await Patient.findByPk(req.params.id);
+
+                Patient.sequelize = db;
+
+                console.log("patient update completed");
+                res.status(200).json(data);
+            }).catch((response)=>{
+
+                if(response.errors) res.status(500).json(response.errors.map(err => { return {"message": err.message}}));
+                else{
+                    res.status(401).json([{"message": "Vous n'êtes pas autoriser à modifier un patient"}]);
+                }
+            });
+        }
+    })
 }
 
 /**
  * Delete patient
  */
 
-exports.deletePatient = (req, res) => {
-    res.status(200).json("Allows you to delete a patient");;
+exports.deletePatient = async(req, res) => {
+    
+    //Switch the connexion to the current user
+     const sequelize = new Sequelize(process.env.PGDATABASE, req.user.username, req.user.password,
+        {
+                host: process.env.PGHOST,
+                dialect: 'postgres'
+        }
+    )
+    Patient.sequelize = sequelize;
+
+    await Patient.findByPk(req.params.id).then(async(response)=>{
+        if(response == null) res.status(404).json([{"message":"Patient introuvable"}]);
+        else{
+            await Patient.destroy({where: { id: req.params.id }}).then((reponse)=>{
+                
+                Patient.sequelize = db;
+
+                console.log("Patient deleted")
+                res.status(200).json(reponse);
+            }).catch((error)=>{
+                res.status(401).json([{"message": "Vous n'êtes pas autoriser à supprimer un patient"}]);
+                
+            })
+        }
+    })
 }
 
 /**
  * Get patient from database
  */
 
-exports.getPatient = (req, res) => {
-    res.status(200).json("Allows you to get a patient");
+exports.getPatient = async(req, res) => {
+   
+    //Switch the connexion to the current user
+   const sequelize = new Sequelize(process.env.PGDATABASE, req.user.username, req.user.password,
+        {
+                host: process.env.PGHOST,
+                dialect: 'postgres'
+        }
+    )
+    Patient.sequelize = sequelize;
+
+    await Patient.findByPk(req.params.id).then((response)=>{     
+        if(response == null) res.status(404).json([{"message":"Patient introuvable"}]);
+        else{
+            Patient.sequelize = db;
+            res.status(200).json(response);
+        }   
+    }).catch((error)=>{
+        console.log(error)
+        res.status(500).json(error); 
+    })
 }
 
 /**
  * Get all patients
  */
 
-exports.getAllPatients = (req, res) => {
-    res.status(200).json("Allows you to get all");
+exports.getAllPatients = async(req, res) => {
+    
+    //Switch the connexion to the current user
+   const sequelize = new Sequelize(process.env.PGDATABASE, req.user.username, req.user.password,
+        {
+                host: process.env.PGHOST,
+                dialect: 'postgres'
+        }
+    )
+    Patient.sequelize = sequelize;
+    try{    
+            const patients = await Patient.findAll();
+            
+            Patient.sequelize = db;
+
+            res.status(200).json(patients);
+            
+    }catch(error){
+        console.log(error)
+        res.status(500).json(error);
+    }
 }
 
 

@@ -10,7 +10,7 @@ const Patient = db.define('patients', {
         primaryKey: true,
     },
     nom:{
-        type: DataTypes.STRING(),
+        type: DataTypes.STRING(20),
         allowNull: false,
         validate:{
             notNull: {
@@ -26,7 +26,7 @@ const Patient = db.define('patients', {
         }
     },
     prenoms:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: true,
         validate:{
             notEmpty: {
@@ -48,14 +48,14 @@ const Patient = db.define('patients', {
             notNull: {
                 msg: "veuillez renseigner le genre du patient"
             },
-            isIN:{
+            isIn:{
                 args: ['M', 'F'],
                 msg: "le genre doit être Masculin ou Feminin"
             }
         }
     },
     adresse:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
         validate:{
             len:{

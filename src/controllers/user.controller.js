@@ -8,21 +8,19 @@ const {generateAccessToken, generateRefreshToken} = require('../middleware/authe
  * Register function
  */
 exports.register = async(req, res)=>{
-
-    //hashing the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+   
 
     const USER_MODEL = {
         username : req.body.username,
         email: req.body.email,
-        password : hashedPassword
+        password : req.body.password
     }
 
     await User.create(USER_MODEL).then((response)=>{
         console.log('User created');
         res.status(201).json(response);
     }).catch((response)=>{
+        console.log(response);
         res.status(500).json(response.errors.map(err => { return {"message": err.message}}));
     })
 
@@ -50,25 +48,30 @@ exports.register = async(req, res)=>{
  * Login function
  */
 exports.login = async(req, res)=>{
+    
     try {
-        const user = await User.findOne({ where: {username: req.body.username}});
-        if (!user) return res.status(401).json({message: "User not found"});
-
+        const user = await User.findOne({ where: {username: req.body.username}})
+        if (user == null) return res.status(401).json({message: "User not found"});
+        console.log(user);
 
         // compare the user password
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) return res.status(401).json({message: "Invalid password"});
 
         // generate the access token
-        const accessToken = generateAccessToken(user);
+        const USER_MODEL = {
+            id: user.id,
+            username: user.username,
+            password: req.body.password
+        }
 
-        // generate the refresh token
-        const refreshToken = generateRefreshToken(user);
+        const accessToken = generateAccessToken(USER_MODEL);
+
 
         res.status(200).json({
-            accessToken: accessToken,
-            refreshToken: refreshToken
+            accessToken
         });
+        
 
     } catch (error) {
         res.status(500).json(error);
@@ -95,6 +98,19 @@ exports.profile = async(req, res)=>{
         res.status(500).json(error);
     }
 }
+
+/**
+ * Get all users from database
+ */
+exports.getAllUsers = async(req, res) => {
+
+    await User.findAll().then((response)=>{
+        res.status(200).json(response);
+    })
+
+}
+
+
 
 /**
  * Refresh token function
