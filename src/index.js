@@ -1,16 +1,29 @@
 const express = require('express');
 const morgan = require('morgan');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const fs = require("fs")
+const YAML = require('yaml')
+
 require('dotenv').config();
+
+const medecinRoutes = require("./routes/medecin.route");
+const userRoutes = require("./routes/user.route");
+const patientRoutes = require("./routes/patient.route");
+const traitementRoutes = require("./routes/traitement.route");
 
 /**
  * Sequelize && allows the app to 
  * create all tables in the database
  */
-const sequelize = require('./util/database');
+const sequelize = require('./utils/database');
 const Medecin = require('./models/medecin');
 const Patient = require('./models/patient');
 const Traitement = require('./models/traitement');
 const User = require('./models/user');
+
+
+
 
 const app = express();
 
@@ -32,10 +45,18 @@ app.use(morgan('dev'));
 /**
  * Endpoints
  */
-app.use("/api", require("./routes/user.route"));
-app.use("/api/medecins", require("./routes/medecin.route"));
-app.use("/api/patients", require("./routes/patient.route"));
-app.use("/api/traitements", require("./routes/traitement.route"));
+app.use("/api", userRoutes);
+app.use("/api/medecins", medecinRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/traitements", traitementRoutes);
+
+/**
+ * Swagger documentation
+ */
+const file  = fs.readFileSync('./swagger.yaml', 'utf8')
+const swaggerDocument = YAML.parse(file)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 (async ()=>{

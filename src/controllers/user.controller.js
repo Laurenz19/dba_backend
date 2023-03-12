@@ -81,7 +81,8 @@ exports.login = async(req, res)=>{
  * Logout function
  */
 exports.logout = async(req, res)=>{
-   res.status(200).json('a function that allows us to log out'); 
+    delete req.headers['authorization'];
+    res.status(200).json('User logged out');
 }
 
 /**

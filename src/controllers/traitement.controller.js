@@ -1,6 +1,6 @@
 const Traitement = require("../models/traitement")
 const Sequelize = require('sequelize');
-const db = require('../util/database');
+const db = require('../utils/database');
 
 /**
  * Create Traitement

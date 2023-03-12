@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const db = require("../util/database");
+const db = require("../utils/database");
 const Traitement = require("./traitement");
 
 const Medecin = db.define('medecins', {
@@ -71,7 +71,7 @@ const Medecin = db.define('medecins', {
         }
     },
     imageUrl: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(200),
         allowNull: true
     }
 })

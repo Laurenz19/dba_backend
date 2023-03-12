@@ -3,6 +3,7 @@ const router = Router();
 const patientController = require("../controllers/patient.controller");
 const { authenticateToken } = require("../middleware/authentication");
 
+
 router
     .get("/", authenticateToken, patientController.getAllPatients)
     .get("/:id", authenticateToken, patientController.getPatient)

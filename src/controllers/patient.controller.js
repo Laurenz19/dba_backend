@@ -1,6 +1,6 @@
 const Patient = require("../models/patient")
 const Sequelize = require('sequelize');
-const db = require('../util/database');
+const db = require('../utils/database');
 
 /**
  * Create new patient
